@@ -1,0 +1,96 @@
+---
+import { basics } from "@cv";
+import Sections from "@/components/Sections.astro";
+import { Image } from "astro:assets";
+import Mail from "@/assets/mail.svg";
+import Phone from "@/assets/phone.svg";
+import Github from "@/assets/github.svg";
+import LinkedIn from "@/assets/linkedin.svg";
+import X from "@/assets/X.svg";
+
+const { name, label, image, location, profiles, phone, email } = basics;
+const { city, region } = location;
+
+const SOCIAL_ICONS: Record<string, any> = {
+  LinkedIn: LinkedIn,
+  X: X,
+  Github: Github,
+};
+
+const linkedInfo = profiles.find(({ network }) => network === "LinkedIn");
+const lnkedUrl = linkedInfo?.url;
+
+const printInfo = [email, phone, lnkedUrl].filter(Boolean).join(" • ");
+---
+
+<Sections>
+  <div class="container">
+    <div class="flex flex-col gap-2 pr-8">
+      <h1 class="text-3xl">{name}</h1>
+      <h2 class="text-[#444] font-medium text-base text-balance">{label}</h2>
+      <span class="text-[#666] flex items-center gap-1 text-sm"
+        >{city}, {region}</span
+      >
+      <footer class="print text-xs text-[#555] mt-4">
+        {printInfo}
+      </footer>
+      <footer
+        class="no-print flex gap-2 mt-2 items-center text-[#666] text-sm transition-all duration-600"
+      >
+        {
+          email && (
+            <a
+              href={`mailto:${email}`}
+              title={`Enviar correo electronico a ${name} al correo ${email}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="p-1 border borer-[#eee] rounded-md hover:bg-[#eee]"
+            >
+              <Mail size={20} mode="sprite" />
+            </a>
+          )
+        }
+        {
+          phone && (
+            <a
+              href={`tel:${phone}`}
+              title={`Llamar por teléfono a ${name} al número ${phone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="p-1 border borer-[#eee] rounded-md hover:bg-[#eee]"
+            >
+              <Phone size={20} mode="sprite" />
+            </a>
+          )
+        }
+        {
+          profiles.map(({ network, username, url, icon }) => {
+            const Icon = SOCIAL_ICONS[icon];
+            return (
+              <a
+                href={url}
+                title={`Visitar el perfil ${username} en ${network}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-1 border borer-[#eee] rounded-md hover:bg-[#eee] cursor-pointer"
+              >
+                {Icon && (
+                  <Icon size={20} mode="sprite" class="hover:bg-[#eee]" />
+                )}
+              </a>
+            );
+          })
+        }
+      </footer>
+    </div>
+    <figure>
+      <Image
+        src={image}
+        alt={name}
+        width={500}
+        height={500}
+        class="aspect-square object-cover rounded-lg w-48"
+      />
+    </figure>
+  </div>
+</Sections>
